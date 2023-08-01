@@ -20,5 +20,6 @@ fresh_install
 - install_go
 - install_node
 - install_mailspring
+- install_discord
 
 #### Each of them can be used after sourcing the script and is in the same sequence as run in fresh_install
