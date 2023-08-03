@@ -115,7 +115,7 @@ install_ulauncher() {
     scripts_update
     scripts_install ulauncher
     pip3 install fuzzywuzzy
-    git clone --depth=1 https://github.com/plibither8/ulauncher-vscode-recent ~/.local/share/ulauncher/extensions/com.github.plibither8.ulauncher-vscode-recent
+    git clone --depth=1 https://github.com/plibither8/ulauncher-vscode-recent $HOME/.local/share/ulauncher/extensions/com.github.plibither8.ulauncher-vscode-recent
 
 }
 
