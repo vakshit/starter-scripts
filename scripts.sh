@@ -8,9 +8,11 @@ set -o pipefail
 scripts_update() {
     sudo apt-get update
 }
+
 scripts_upgrade() {
     sudo apt-get -y upgrade
 }
+
 scripts_install() {
     sudo apt-get -y install "$@"
 }
@@ -112,6 +114,9 @@ install_ulauncher() {
     sudo add-apt-repository ppa:agornostal/ulauncher
     scripts_update
     scripts_install ulauncher
+    pip3 install fuzzywuzzy
+    git clone --depth=1 https://github.com/plibither8/ulauncher-vscode-recent ~/.local/share/ulauncher/extensions/com.github.plibither8.ulauncher-vscode-recent
+
 }
 
 install_go() {
@@ -216,7 +221,5 @@ fresh_install () {
     install_ros
     install_zsh
 }
-
-
 
 fresh_install
