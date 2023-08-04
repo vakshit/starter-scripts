@@ -93,19 +93,21 @@ install_wallpaper() {
 }
 
 install_grub_theme() {
-    chmod +x settings/install.sh
-    sudo ./settings/install.sh
+    chmod +x settings/Vimix/install.sh
+    sudo ./settings/Vimix/istall.sh
 }
 
 install_microsoft_edge() {
     echo "Installing Microsoft Edge"
     curl --output /tmp/edge.deb -L https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_115.0.1901.188-1_amd64.deb?brand=M102
     scripts_install /tmp/edge.deb
+    scripts_update
+    scripts_upgrade
 }
 
 install_vscode() {
     echo "Installing Vscode"
-    curl --output /tmp/vscode.deb -L https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64 
+    curl --output /tmp/vscode.deb -L "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64 "
     scripts_install /tmp/vscode.deb
 }
 
@@ -124,7 +126,7 @@ install_go() {
     curl https://dl.google.com/go/go1.20.6.linux-amd64.tar.gz --output /tmp/go1.20.6.linux-amd64.tar.gz
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.20.6.linux-amd64.tar.gz
     rm go1.20.6.linux-amd64.tar.gz
-    cd
+    cd $HOME
 }
 
 install_node() {
@@ -164,13 +166,13 @@ install_ros() {
 
 install_mailspring() {
     echo "Installing Mailspring"
-    curl --output /tmp/mailspring.deb -L https://updates.getmailspring.com/download?platform=linuxDeb 
+    curl --output /tmp/mailspring.deb -L "https://updates.getmailspring.com/download?platform=linuxDeb" 
     scripts_install /tmp/mailspring.deb
 }
 
 install_discord() {
     echo "Installing Discord"
-    curl --output /tmp/discord.deb -L https://discord.com/api/download?platform=linux&format=deb 
+    curl --output /tmp/discord.deb -L "https://discord.com/api/download?platform=linux&format=deb"
     scripts_install /tmp/discord.deb
 }
 
