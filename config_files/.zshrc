@@ -109,9 +109,9 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # custom sources
-source "$HOME/custom_scripts/alias.sh"
-source "$HOME/custom_scripts/custom_functions.sh"
-source "$HOME/custom_scripts/environment.sh"
+source "$HOME/custom_files/alias.sh"
+source "$HOME/custom_files/custom_functions.sh"
+source "$HOME/custom_files/environment.sh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

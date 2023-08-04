@@ -5,6 +5,35 @@ set -e
 # Exit the script if any command in a pipeline fails
 set -o pipefail
 
+#COLORS
+CDEF=" \033[0m"                                     # default color
+CCIN=" \033[0;36m"                                  # info color
+CGSC=" \033[0;32m"                                  # success color
+CRER=" \033[0;31m"                                  # error color
+CWAR=" \033[0;33m"                                  # waring color
+b_CDEF=" \033[1;37m"                                # bold default color
+b_CCIN=" \033[1;36m"                                # bold info color
+b_CGSC=" \033[1;32m"                                # bold success color
+b_CRER=" \033[1;31m"                                # bold error color
+b_CWAR=" \033[1;33m"                                # bold warning color
+
+# echo like ...  with  flag type  and display message  colors
+prompt () {
+  case ${1} in
+    "-s"|"--success")
+      echo -e "${b_CGSC}${@/-s/}${CDEF}";;          # print success message
+    "-e"|"--error")
+      echo -e "${b_CRER}${@/-e/}${CDEF}";;          # print error message
+    "-w"|"--warning")
+      echo -e "${b_CWAR}${@/-w/}${CDEF}";;          # print warning message
+    "-i"|"--info")
+      echo -e "${b_CCIN}${@/-i/}${CDEF}";;          # print info message
+    *)
+    echo -e "$@"
+    ;;
+  esac
+}
+
 scripts_update() {
     sudo apt-get update
 }
@@ -18,10 +47,10 @@ scripts_install() {
 }
 
 basic_start() {
-    echo "Basic update upgrade and installing essential packages"
+    prompt -i "Basic update upgrade and installing essential packages"
     scripts_update
     scripts_upgrade
-    scripts_install gnome-tweaks tree dconf-editor curl git python3-pip lolcat figlet pulseaudio chrome-gnome-shell gnome-shell-extensions
+    scripts_install gnome-tweaks tree dconf-editor curl git python3-pip lolcat figlet pulseaudio chrome-gnome-shell gnome-shell-extensions copyq
 
     # setup git credentials
     git config --global user.email "akshitv18@gmail.com"
@@ -33,11 +62,21 @@ basic_start() {
     cp -r $(pwd)/custom_files/ $HOME
 
     # Restore dash to dock settings
-    dconf load /org/gnome/shell/extensions/dash-to-dock/ < settings/dash_to_dock_settings.txt
+    dconf load /org/gnome/shell/extensions/dash-to-dock/ < settings/dash_to_dock_settings.dconf
 
+    # Restore terminal settings
+    dconf load /org/gnome/terminal/legacy/profiles:/ < settings/terminal-profile.dconf.dconf
+
+    # Restore Extensions
+    cat settings/extensions.dconf | while read line; do gnome-extensions enable "$line"; done
+
+    # Restore Gnome Settings
+    dconf load / < settings/gnome-settings.dconf
 }
 
 install_wallpaper() {
+    prompt -i "Installing Dynamic Wallpapers"
+
     WALPAPER_DEST="/usr/share/backgrounds/Dynamic_Wallpapers"
     XML_DEST="/usr/share/gnome-background-properties/"
     GIT_URL="https://github.com/saint-13/Linux_Dynamic_Wallpapers.git/"
@@ -105,56 +144,73 @@ install_wallpaper() {
     gsettings set org.gnome.desktop.background picture-uri $WALPAPER_DEST/cyberpunk-01.xml
     echo "💜 Please support on https://github.com/saint-13/Linux_Dynamic_Wallpapers"
     rm -rf Linux_Dynamic_Wallpapers
+
+    prompt -i "Wallpaper installed"
 }
 
 install_grub_theme() {
+    prompt -i "Installing Grub Theme"
 
-    
-    chmod +x settings/Vimix/install.sh
-    sudo ./settings/Vimix/install.sh
+    chmod +x $(pwd)/settings/Vimix/install.sh
+    sudo $(pwd)/settings/Vimix/install.sh
+
+    prompt -i "Grub Theme installed"
 }
 
 install_microsoft_edge() {
-    echo "Installing Microsoft Edge"
+    prpmpt -i "Installing Microsoft Edge"
+
     curl --output /tmp/edge.deb -L https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_115.0.1901.188-1_amd64.deb?brand=M102
     scripts_install /tmp/edge.deb
     scripts_update
     scripts_upgrade
+
+    prompt -i "Microsoft Edge installed"
 }
 
 install_vscode() {
-    echo "Installing Vscode"
+    prpmpt -i "Installing VSCode"
+
     curl --output /tmp/vscode.deb -L "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
     scripts_install /tmp/vscode.deb
+
+    prompt -i "Installed VSCode"
 }
 
 install_ulauncher() {
-    echo "Installing ULauncher"
+    prompt -i "Installing ULauncher"
+
     sudo add-apt-repository ppa:agornostal/ulauncher
     scripts_update
     scripts_install ulauncher
     pip3 install fuzzywuzzy
     git clone --depth=1 https://github.com/plibither8/ulauncher-vscode-recent $HOME/.local/share/ulauncher/extensions/com.github.plibither8.ulauncher-vscode-recent
 
+    prompt -i "Installed ULauncher with code extension"
 }
 
 install_go() {
-    echo "Installing golang"
+    prompt -i "Installing golang"
+
     curl https://dl.google.com/go/go1.20.6.linux-amd64.tar.gz --output /tmp/go1.20.6.linux-amd64.tar.gz
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.20.6.linux-amd64.tar.gz
-    cd $HOME
+
+    prompt -i "Installed golang"
 }
 
 install_node() {
-    echo "Installing Node"
+    prompt -i "Installing Node"
+
     scripts_install curl
     curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
     scripts_install nodejs
     scripts_install yarn
+
+    prompt -i "Installed Node"
 }
 
 install_ros() {
-    echo "Installing ROS"
+    prompt -i "Installing ROS"
     
     # 1.1 Update source list
     scripts_update
@@ -179,22 +235,29 @@ install_ros() {
     scripts_install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential python3-catkin
     sudo rosdep init
     rosdep update
+
 }
 
 install_mailspring() {
-    echo "Installing Mailspring"
+    prompt -i "Installing Mailspring"
+
     curl --output /tmp/mailspring.deb -L "https://updates.getmailspring.com/download?platform=linuxDeb" 
     scripts_install /tmp/mailspring.deb
+
+    prompt -i "Installed Mailspring"
 }
 
 install_discord() {
-    echo "Installing Discord"
+    prompt -i "Installing Discord"
+
     curl --output /tmp/discord.deb -L "https://discord.com/api/download?platform=linux&format=deb"
     scripts_install /tmp/discord.deb
+
+    prompt -i "Installed Discord"
 }
 
 install_zsh() {
-    echo "Installing ZSH Shell"
+    prompt -i "Installing ZSH Shell"
 
     # 1.1 Install zsh shell
     scripts_install zsh
@@ -220,6 +283,8 @@ install_zsh() {
     git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
     # Syntax Highlighting
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
+
+    prompt -i "Installed ZSH Shell. Please restart your machine"
 }
 
 fresh_install () {

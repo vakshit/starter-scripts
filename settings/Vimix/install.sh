@@ -58,7 +58,7 @@ if [ "$UID" -eq "$ROOT_UID" ]; then
   # Copy theme
   prompt -i "\nInstalling ${THEME_NAME} theme...\n"
 
-  cp -a ${pwd}/settings/${THEME_NAME}/* ${THEME_DIR}/${THEME_NAME}
+  cp -a $(pwd)/settings/${THEME_NAME}/${THEME_NAME}/* ${THEME_DIR}/${THEME_NAME}
 
   # Set theme
   prompt -i "\nSetting ${THEME_NAME} as default...\n"
