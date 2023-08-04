@@ -28,8 +28,9 @@ basic_start() {
     git config --global user.name "vakshit"
 
     # Copy config files
-    cp config_files/* $HOME
-    cp -r custom_files/ $HOME
+    cp $(pwd)/config_files/.zshrc $HOME
+    cp $(pwd)/config_files/.p10k.zsh $HOME
+    cp -r $(pwd)/custom_files/ $HOME
 
     # Restore dash to dock settings
     dconf load /org/gnome/shell/extensions/dash-to-dock/ < settings/dash_to_dock_settings.txt
@@ -40,8 +41,19 @@ install_wallpaper() {
     WALPAPER_DEST="/usr/share/backgrounds/Dynamic_Wallpapers"
     XML_DEST="/usr/share/gnome-background-properties/"
     GIT_URL="https://github.com/saint-13/Linux_Dynamic_Wallpapers.git/"
+    rm -rf Linux_Dynamic_Wallpapers
+    # Clone .git folder -> Lightweigh checkout
+    git clone --filter=blob:none --no-checkout "$GIT_URL"
 
-    # Display interactive list to user
+    # List files in repo and create array of available walpapers
+    walpaper_list="$(git --git-dir Linux_Dynamic_Wallpapers/.git ls-tree --full-name --name-only -r HEAD | \
+	grep xml/ | \
+	sed -e 's/^xml\///' | \
+	sed -e 's/.xml//' | \
+	sed -e 's/$/,,OFF/' | \
+	tr "\n" "," \
+    )"
+    
     user_selection=cyberpunk-01
 
     # Create directories
@@ -50,8 +62,10 @@ install_wallpaper() {
     echo "-----------------"
     echo "- Walpapers destionation: $WALPAPER_DEST"
     echo "- XML slideshows destination: $XML_DEST"
+    rm -rf $WALLPEPER_DEST
     sudo mkdir -p "$WALPAPER_DEST"
     echo "✅ Created $WALPAPER_DEST"
+    rm -rf $WALLPEPER_DEST
     sudo mkdir -p "$XML_DEST"
     echo "✅ Created $XML_DEST"
 
@@ -88,13 +102,16 @@ install_wallpaper() {
 
     echo
     echo "Success !"
-    gsettings set org.gnome.desktop.background $WALPAPER_DEST/cyberpunk-01.xml
+    gsettings set org.gnome.desktop.background picture-uri $WALPAPER_DEST/cyberpunk-01.xml
     echo "💜 Please support on https://github.com/saint-13/Linux_Dynamic_Wallpapers"
+    rm -rf Linux_Dynamic_Wallpapers
 }
 
 install_grub_theme() {
+
+    
     chmod +x settings/Vimix/install.sh
-    sudo ./settings/Vimix/istall.sh
+    sudo ./settings/Vimix/install.sh
 }
 
 install_microsoft_edge() {
@@ -107,7 +124,7 @@ install_microsoft_edge() {
 
 install_vscode() {
     echo "Installing Vscode"
-    curl --output /tmp/vscode.deb -L "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64 "
+    curl --output /tmp/vscode.deb -L "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
     scripts_install /tmp/vscode.deb
 }
 
@@ -125,7 +142,6 @@ install_go() {
     echo "Installing golang"
     curl https://dl.google.com/go/go1.20.6.linux-amd64.tar.gz --output /tmp/go1.20.6.linux-amd64.tar.gz
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go1.20.6.linux-amd64.tar.gz
-    rm go1.20.6.linux-amd64.tar.gz
     cd $HOME
 }
 
@@ -134,6 +150,7 @@ install_node() {
     scripts_install curl
     curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
     scripts_install nodejs
+    scripts_install yarn
 }
 
 install_ros() {
@@ -181,25 +198,21 @@ install_zsh() {
 
     # 1.1 Install zsh shell
     scripts_install zsh
-    echo $HOME
     export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
-    # Change shell to zsh
-    chsh -s $(which zsh)
 
     # Install OhMyZsh
     rm -rf $HOME/.oh-my-zsh 
-    rm $HOME/.zshrc 2> /dev/null
-    rm $HOME/.p10k.zsh 2> /dev/null
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     scripts_install fonts-powerline
     
     echo $HOME
     export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 
-    # Copy .zshrc and powerline10k conf
-    cp .zshrc $HOME/.zshrc
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-    cp .p10k.zsh $HOME/.p10k.zsh
+    
+    # Install Font
+    sudo cp $(pwd)/settings/MLGSNF.ttf /usr/share/fonts/truetype/
+    sudo fc-cache -f
 
     # Install Plugins
 
