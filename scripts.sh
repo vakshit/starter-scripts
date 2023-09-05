@@ -50,7 +50,7 @@ basic_start() {
     prompt -i "Basic update upgrade and installing essential packages"
     scripts_update
     scripts_upgrade
-    scripts_install gnome-tweaks tree dconf-editor curl git python3-pip lolcat figlet pulseaudio pulseeffects chrome-gnome-shell gnome-shell-extensions copyq
+    scripts_install gnome-tweaks tree dconf-editor curl git python3-pip lolcat figlet pulseaudio pulseeffects chrome-gnome-shell gnome-shell-extensions git
 
     # setup git credentials
     git config --global user.email "akshitv18@gmail.com"
