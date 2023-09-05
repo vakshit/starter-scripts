@@ -57,23 +57,6 @@ basic_start() {
     # setup git credentials
     git config --global user.email "akshitv18@gmail.com"
     git config --global user.name "vakshit"
-
-    # Copy config files
-    cp $(pwd)/config_files/.zshrc $HOME
-    cp $(pwd)/config_files/.p10k.zsh $HOME
-    cp -r $(pwd)/custom_files/ $HOME
-
-    # Restore dash to dock settings
-    dconf load /org/gnome/shell/extensions/dash-to-dock/ < settings/dash_to_dock_settings.dconf
-
-    # Restore terminal settings
-    dconf load /org/gnome/terminal/legacy/profiles:/ < settings/terminal-profile.dconf.dconf
-
-    # Restore Extensions
-    cat settings/extensions.dconf | while read line; do gnome-extensions enable "$line"; done
-
-    # Restore Gnome Settings
-    dconf load / < settings/gnome-settings.dconf
 }
 
 install_wallpaper() {
@@ -160,7 +143,7 @@ install_grub_theme() {
 }
 
 install_microsoft_edge() {
-    prpmpt -i "Installing Microsoft Edge"
+    prompt -i "Installing Microsoft Edge"
 
     curl --output /tmp/edge.deb -L https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_115.0.1901.188-1_amd64.deb?brand=M102
     scripts_install /tmp/edge.deb
@@ -171,7 +154,7 @@ install_microsoft_edge() {
 }
 
 install_vscode() {
-    prpmpt -i "Installing VSCode"
+    prompt -i "Installing VSCode"
 
     curl --output /tmp/vscode.deb -L "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
     scripts_install /tmp/vscode.deb
@@ -281,7 +264,8 @@ install_devops() {
 
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
     unzip /tmp/awscliv2.zip
-    sudo /tmp/aws/install
+    sudo ./aws/install
+    rm -rf aws
 
     prompt -i "Installed AWS CLI"
 
@@ -327,7 +311,29 @@ install_zsh() {
     # Syntax Highlighting
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
 
+    # zsh marks
+    git clone git@github.com:martvdmoosdijk/zsh-marks.git $ZSH_CUSTOM/plugins/zsh-marks
+    
     prompt -i "Installed ZSH Shell. Please restart your machine"
+}
+
+restore_settings() {
+	# Restore dash to dock settings
+    dconf load /org/gnome/shell/extensions/dash-to-dock/ < settings/dash_to_dock_settings.dconf
+
+    # Restore terminal settings
+    dconf load /org/gnome/terminal/legacy/profiles:/ < settings/terminal-profile.dconf
+
+    # Restore Extensions
+    cat settings/extensions.dconf | while read line; do gnome-extensions enable "$line"; done
+
+    # Restore Gnome Settings
+    dconf load / < settings/gnome-settings.dconf  
+
+    # Copy config files
+    cp -f $(pwd)/config_files/.zshrc $HOME
+    cp -f $(pwd)/config_files/.p10k.zsh $HOME
+    cp -rf $(pwd)/custom_files/ $HOME 
 }
 
 fresh_install () {
@@ -344,6 +350,7 @@ fresh_install () {
     install_ros
     install_devops
     install_zsh
+    restore_settings
 }
 
 fresh_install

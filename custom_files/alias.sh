@@ -26,10 +26,12 @@ alias commit='git commit'
 alias ...='../..'
 alias ....='../../..'
 alias smongod="sudo systemctl start mongod"
-# alias dclean="docker rm -vf $(docker ps -a -q) && docker rmi -f $(docker images -a -q) && docker volume rm $(docker volume ls -q)"
+alias dclean="docker rm -vf $(docker ps -a -q) && docker rmi -f $(docker images -a -q) && docker volume rm $(docker volume ls -q)"
 alias pmp="python3 manage.py"
 alias p3="python3"
 alias air="~/go/bin/air"
+alias dc="docker-compose"
+alias tf="terraform"
 ## source aliases
 alias sz="source ~/.zshrc"
 alias srws="source ~/Custom_sh_files/ros_workspaces.sh"
