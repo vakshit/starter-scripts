@@ -50,7 +50,9 @@ basic_start() {
     prompt -i "Basic update upgrade and installing essential packages"
     scripts_update
     scripts_upgrade
-    scripts_install gnome-tweaks tree dconf-editor curl git python3-pip lolcat figlet pulseaudio pulseeffects chrome-gnome-shell gnome-shell-extensions git
+    sudo add-apt-repository ppa:appimagelauncher-team/stable
+    scripts_update
+    scripts_install gnome-tweaks tree dconf-editor curl git python3-pip lolcat figlet pulseaudio pulseeffects chrome-gnome-shell gnome-shell-extensions appimagelauncher
 
     # setup git credentials
     git config --global user.email "akshitv18@gmail.com"
